@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t namron/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true namron/react-test npm test
+
+after_success:
+  - docker -t namron/multi-client build ./client
+  - docker -t namron/multi-server build ./server
+  - docker -t namron/multi-nginx build ./nginx
+  - docker -t namron/multi-worker build ./worker
+
+  # Login to docker hub
+  - docker login --username "${DOCKER_ID}" --password "${DOCKER_PASSWORD}"
+
+  # push images to docker hub
+  - docker push namron/multi-client
+  - docker push namron/multi-server
+  - docker push namron/multi-nginx
+  - docker push namron/multi-worker
