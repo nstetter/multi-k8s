@@ -15,7 +15,7 @@ after_success:
   - docker build -t namron/multi-worker build ./worker
 
   # Login to docker hub
-  - docker login --username "${DOCKER_ID}" --password "${DOCKER_PASSWORD}"
+  - echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_ID}" --password-stdin
 
   # push images to docker hub
   - docker push namron/multi-client
